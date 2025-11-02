@@ -1,6 +1,7 @@
-import { useState, useEffect, Children } from "react";
+import { useState, useEffect, Children, useContext } from "react";
 import { Minimize2, X, FileText, Minimize } from "lucide-react";
-import { easeInOut, motion } from "framer-motion";
+import { easeInOut, isDragActive, motion, scale } from "framer-motion";
+import { WindowManagerContext } from "../../context/WindowManager/WindowManagerContext";
 
 export default function Window({
   window: win,
@@ -10,6 +11,8 @@ export default function Window({
   onFocus,
   onUpdate,
 }) {
+  const { mouseClickPos } = useContext(WindowManagerContext);
+
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -86,7 +89,11 @@ export default function Window({
         width: "100vw",
         height: "calc(100vh - 120px)",
         zIndex: win.zIndex,
-        transition: "all 0.3s ease-in-out",
+        transition: `${
+          isDragging || isResizing
+            ? ""
+            : "width 0.3s ease-in-out, height 0.3s ease-in-out, top 0.3s ease-in-out, left 0.3s ease-in-out"
+        }`,
       }
     : {
         top: win.y,
@@ -94,14 +101,18 @@ export default function Window({
         width: win.width,
         height: win.height,
         zIndex: win.zIndex,
-        transition: "all 0.3s ease-in-out",
+        transition: `${
+          isDragging || isResizing
+            ? ""
+            : "width 0.3s ease-in-out, height 0.3s ease-in-out, top 0.3s ease-in-out, left 0.3s ease-in-out"
+        }`,
       };
 
   return (
     <motion.div
       initial={{ scale: 0.8, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0.8, opacity: 0 }}
+      exit={{ scale: 0.8, opacity: 0, x: mouseClickPos.x, y: mouseClickPos.y }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className={`text-black fixed bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col ${
         isActive ? "ring-2 ring-blue-500" : ""

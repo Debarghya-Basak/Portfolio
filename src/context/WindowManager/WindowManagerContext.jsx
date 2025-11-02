@@ -1,11 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const WindowManagerContext = React.createContext();
 
 const WindowManagerProvider = ({ children }) => {
+  const [mouseClickPos, setMouseClickPos] = useState({ x: 0, y: 0 });
+
   const [windows, setWindows] = useState([]);
   const [activeWindow, setActiveWindow] = useState(null);
   const [nextZIndex, setNextZIndex] = useState(10);
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      console.log("Clicked somewhere:");
+      setMouseClickPos({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener("mousedown", handleClick);
+
+    return () => {
+      window.removeEventListener("mousedown", handleClick);
+    };
+  }, []);
 
   const openWindow = (type, title, application, data) => {
     const newWindow = {
@@ -69,6 +84,8 @@ const WindowManagerProvider = ({ children }) => {
         minimizeWindow,
         maximizeWindow,
         bringToFront,
+        mouseClickPos,
+        setMouseClickPos,
       }}
     >
       {children}
