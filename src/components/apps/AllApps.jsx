@@ -1,4 +1,4 @@
-export default function Apps() {
+export default function AllApps() {
   return (
     <div className="h-full p-6">
       <h2 className="text-xl font-semibold mb-6">All Applications</h2>

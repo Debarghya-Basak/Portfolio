@@ -1,15 +1,14 @@
 import { useState, useEffect, Children } from "react";
 import { Minimize2, X, FileText, Minimize } from "lucide-react";
+import { easeInOut, motion } from "framer-motion";
 
 export default function Window({
   window: win,
   isActive,
   onClose,
-  onMinimize,
   onMaximize,
   onFocus,
   onUpdate,
-  openWindow,
 }) {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
@@ -87,6 +86,7 @@ export default function Window({
         width: "100vw",
         height: "calc(100vh - 120px)",
         zIndex: win.zIndex,
+        transition: "all 0.3s ease-in-out",
       }
     : {
         top: win.y,
@@ -94,10 +94,15 @@ export default function Window({
         width: win.width,
         height: win.height,
         zIndex: win.zIndex,
+        transition: "all 0.3s ease-in-out",
       };
 
   return (
-    <div
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.8, opacity: 0 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
       className={`text-black fixed bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col ${
         isActive ? "ring-2 ring-blue-500" : ""
       }`}
@@ -141,6 +146,6 @@ export default function Window({
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
